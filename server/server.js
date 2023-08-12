@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const bodyParser = require('body-parser');
+const { Configuration, OpenAIApi } = require("openai");
 
 app.use(cors());
 app.use(bodyParser.json()); // Use the body-parser middleware
@@ -12,6 +13,15 @@ const encodedPassword = encodeURIComponent("Navya#1427");
 const uri = `mongodb+srv://trickerbaby:${encodedPassword}@cluster0.rq5ucba.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const configuration = new Configuration({
+  apiKey: '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'
+});
+
+
+
+const openai = new OpenAIApi(configuration);
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -83,6 +93,107 @@ app.get('/getSubject', async (req, res) => {
     }
   });
 
+
+  const validCredentials = {
+    username: "testuser",
+    password: "testpassword",
+  };
+  
+  // Route to validate user credentials
+  app.post("/login", async (req, res) => {
+    console.log("enterd");
+    const { username, password } = req.body;
+    
+    try {
+      // Assuming you have a MongoDB collection named 'subjects'
+      const db = client.db("myDatabase");
+      const studentColl = db.collection("student");
+  
+      // Find the subject with the specified subjectCode
+      const student = await studentColl.findOne({username,password});
+
+      console.log(student);
+  
+      if (student) {
+        res.json(student);
+      } else {
+        res.json({ message: "Not found" });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+    // Check if the provided credentials match the valid credentials
+    
+  });
+
+
+  
+ // Sample endpoint to handle answer submission
+ app.post("/submit-answer", async (req, res) => {
+  try {
+    // Extract the submitted data from the request body
+    const { rollNumber, name, semester, subjectCode, date, questions } = req.body;
+
+    // Validate the data (you should implement your own validation logic)
+    if (!rollNumber || !name || !semester || !subjectCode || !date || !Array.isArray(questions)) {
+      return res.status(400).json({ message: "Invalid request data" });
+    }
+
+    // Process the answers (e.g., store them in a database)
+    console.log("Submitted Answers:");
+    console.log("Roll Number:", rollNumber);
+    console.log("Name:", name);
+    console.log("Semester:", semester);
+    console.log("Subject Code:", subjectCode);
+    console.log("Date:", date);
+    console.log("Questions and Answers:", questions);
+
+    const completion = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `You are a university professor give marks out of ${questions[0]['marks']} on this answer "${questions[0]['userAnswer']}" For this question "${questions[0]['question']}" Please only give output in this format "<total_marks>(only a single integer),<Feedback>" please maintain this format its just for fun and entertainment `,
+        },
+      ],
+    });
+
+    const detail = completion.data.choices[0].message.content.split(',');
+
+    console.log("MARKS :", detail[0]);
+    console.log("FEEDBACK :", detail[1]);
+    questions[0]['feedback'] = detail[1];
+    questions[0]['marks-got'] = detail[0];
+
+    // Store the answers in your MongoDB collection
+    const db = client.db("myDatabase");
+    const resultsColl = db.collection("results");
+    await resultsColl.insertOne({
+      rollNumber,
+      name,
+      semester,
+      subjectCode,
+      date,
+      questions,
+    });
+
+    console.log("Successfully submitted this JSON: ", {
+      rollNumber,
+      name,
+      semester,
+      subjectCode,
+      date,
+      questions,
+    });
+
+    // Return a success response
+    res.status(200).json({ message: "Answers submitted successfully" });
+  } catch (error) {
+    console.error("Error while processing answer submission:", error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+});
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');
