@@ -6,6 +6,7 @@ import Student from './student';
 import Teacher from './teacher';
 import Queform from "./Queform";
 import Giveexam from './giveexam';
+import TeacherResultsPage from './TeacherResultsPage';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
           <Route path='/teacher' element={<Teacher />} />
           <Route path='/createexam' element={<Queform />} />
           <Route path='/giveexam' element={<Giveexam />} />
+          <Route path='/viewresults' element={<TeacherResultsPage />} />
+          
         </Routes>
       </BrowserRouter>
     </div>

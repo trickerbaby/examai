@@ -16,7 +16,7 @@ const uri = `mongodb+srv://trickerbaby:${encodedPassword}@cluster0.rq5ucba.mongo
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const configuration = new Configuration({
-  apiKey: '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'
+  apiKey: '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'
 });
 
 
@@ -61,6 +61,35 @@ app.post('/insertquestion', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send({ success: false });
+  }
+});
+
+
+app.get('/getresultsteacher', async (req, res) => {
+  console.log("DONE");
+  const rollNumber = req.query.rollNumber;
+ 
+
+  try {
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+    await client.connect();
+
+    const db = client.db("myDatabase");
+    const resultsCollection = db.collection('results'); // Use the "results" collection
+
+    const studentResults = await resultsCollection.findOne({ rollNumber });
+
+    client.close();
+
+    if (studentResults) {
+      res.json(studentResults); // Send the student's results as a JSON response
+    } else {
+      res.status(404).json({ message: 'Student not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching results:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
