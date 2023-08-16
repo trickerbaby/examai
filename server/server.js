@@ -68,6 +68,7 @@ app.post('/insertquestion', async (req, res) => {
 app.get('/getresultsteacher', async (req, res) => {
   console.log("DONE");
   const rollNumber = req.query.rollNumber;
+  
  
 
   try {
