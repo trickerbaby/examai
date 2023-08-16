@@ -19,6 +19,7 @@ function App() {
           <Route path='/createexam' element={<Queform />} />
           <Route path='/giveexam' element={<Giveexam />} />
           <Route path='/viewresults' element={<TeacherResultsPage />} />
+          <Route path='/getresults' element={<TeacherResultsPage />} />
           
         </Routes>
       </BrowserRouter>
