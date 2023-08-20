@@ -155,7 +155,7 @@ function Giveexam() {
       />
       <button onClick={handleSubmit}>Submit</button>
 
-      {questions && questions.length > 0 && !success ? (
+      {questions && questions.length > 0? (
         <div>
           <h3>Questions:</h3>
           <ul>
