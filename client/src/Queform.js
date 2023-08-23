@@ -7,6 +7,7 @@ export default function QueForm() {
   const [authenticated, setAuthenticated] = useState(false);
 
   const [numQuestions, setNumQuestions] = useState(0);
+  const [evaluationMessage, setEvaluationMessage] = useState("");
   const [examData, setExamData] = useState({
     subjectCode: "",
     semester: "",
@@ -80,10 +81,12 @@ export default function QueForm() {
       })
       .then((response) => {
         // Handle the response from the server
+        setEvaluationMessage("Questions Uploaded Successfully!");
         console.log("Data sent successfully:", response.data);
       })
       .catch((error) => {
         // Handle errors
+        setEvaluationMessage("Failed to upload questions. Please try again."); 
         console.error("Error sending data:", error);
       });
   };
@@ -188,6 +191,7 @@ export default function QueForm() {
           <h2>Questions and Marks</h2>
           {generateInputs()}
           <button onClick={handleSubmit}>Submit</button>
+          {evaluationMessage && <p>{evaluationMessage}</p>}
         </div>
       )}
     </div>
