@@ -16,7 +16,7 @@ const uri = `mongodb+srv://trickerbaby:${encodedPassword}@cluster0.rq5ucba.mongo
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const configuration = new Configuration({
-  apiKey: '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'
+  apiKey: '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'
 });
 
 
