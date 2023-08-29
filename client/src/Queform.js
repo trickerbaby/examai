@@ -74,7 +74,7 @@ export default function QueForm() {
     const jsonData = JSON.stringify(examData, null, 2);
     // Send the data to the 'insertquestion' route
     axios
-      .post("http://localhost:3001/insertquestion", jsonData, {
+      .post("https://examai.onrender.com/insertquestion", jsonData, {
         headers: {
           "Content-Type": "application/json",
         },

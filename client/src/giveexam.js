@@ -13,6 +13,7 @@ function Giveexam() {
   const [loginError, setLoginError] = useState("");
   const [userInfo, setUserInfo] = useState(null);
   const [success,setsuccess] = useState(false);
+  const [logging,setlogging] = useState("");
   
   const handleInputChange = (event) => {
     setSubjectCode(event.target.value);
@@ -36,12 +37,13 @@ function Giveexam() {
       username: rollNumber,
       password: password,
     };
-
+    setlogging("logging in...");
     // Send a POST request to the /login route on the server
     axios
-      .post("http://localhost:3001/login", credentials)
+      .post("https://examai.onrender.com/login", credentials)
       .then((response) => {
         // Check the server's response for authentication success
+       
         if (!response.data.message) {
           // Authentication successful
           console.log("details fethced")
@@ -51,11 +53,13 @@ function Giveexam() {
           setLoginError(""); // Clear any previous login error
         } else {
           // Authentication failed
+          setlogging("Login Failed!");
           setLoginError("Invalid credentials. Please check your roll number and password.");
         }
       })
       .catch((error) => {
         console.error("Authentication failed:", error);
+        setlogging("Login Failed!");
         setLoginError("An error occurred during authentication. Please try again.");
       });
   };
@@ -66,7 +70,7 @@ function Giveexam() {
         setCurrentDate(date);
         const queryParams = `?subjectCode=${subjectCode}&date=${date}`;
         axios
-          .get(`http://localhost:3001/getSubject/${queryParams}`)
+          .get(`https://examai.onrender.com/getSubject/${queryParams}`)
           .then((response) => {
             setQuestions(response.data.questions);
            
@@ -110,7 +114,7 @@ function Giveexam() {
       console.log("info = ",userInfo);
 
       axios
-      .post("http://localhost:3001/submit-answer", examData)
+      .post("https://examai.onrender.com/submit-answer", examData)
       .then((response) => {
         console.log(response.data);
         // Handle success, e.g., show a success message
@@ -142,6 +146,7 @@ function Giveexam() {
         </div>
         <button onClick={handleLogin}>Login</button>
         {loginError && <p>{loginError}</p>}
+        {logging && <p>{logging}</p>}
       </div>
     );
   }

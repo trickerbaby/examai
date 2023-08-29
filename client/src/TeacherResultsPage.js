@@ -26,7 +26,7 @@ const TeacherResultsPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:3001/getresultsteacher?rollNumber=${rollNumber}`);
+      const response = await fetch(`https://examai.onrender.com/getresultsteacher?rollNumber=${rollNumber}`);
       const text = await response.text();
       console.log('Response text:', text);
       const data = JSON.parse(text);
